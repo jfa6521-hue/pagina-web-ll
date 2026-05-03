@@ -10,59 +10,38 @@
 <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 <style>
 :root{
-  ```css
-:root {
-  /* 🧱 Fondo (oscuro real, no gris claro) */
-  --bg: #020403;
-  --surface: #050a07;
-  --surface-2: #08110c;
-  --panel: #0b1812;
-
-  /* 🌿 Verde técnico (tipo terminal / monitoreo) */
-  --primary: #00ff9c;
-  --primary-dim: #00c97a;
-  --primary-glow: #00ff9c33;
-
-  /* 🔋 Estados del sistema */
-  --success: #22c55e;   /* OK */
-  --warning: #facc15;   /* batería media */
-  --danger:  #ef4444;   /* batería baja / error */
-
-  /* 🌡️ Temperatura */
-  --temp-cold: #38bdf8;
-  --temp-normal: #22c55e;
-  --temp-hot: #ef4444;
-
-  /* 📡 NFC / accesos */
-  --access-granted: #00ff9c;
-  --access-denied: #ff3b3b;
-
-  /* 🧠 Texto */
-  --text: #d8ffe9;
-  --text-muted: #7aa892;
-  --text-dim: #4b6b5a;
-
-  /* 🔲 Bordes */
-  --border: #123524;
-  --border-strong: #1f5c3c;
-
-  /* ✨ Efectos (clave para que se vea PRO) */
-  --glow: 0 0 10px var(--primary-glow);
-  --glow-strong: 0 0 20px var(--primary-glow);
-
-  /* 🌫️ Sombras */
-  --shadow: 0 8px 20px rgba(0,0,0,0.8);
-
-  /* 🔲 Bordes redondeados */
-  --radius: 10px;
-
-  /* ⚡ Transiciones */
-  --transition: 0.25s ease;
-
-  /* 🔤 Tipografía tipo sistema */
-  --font-main: 'JetBrains Mono', monospace;
+ body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-main);
 }
-```
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.status-ok {
+  color: var(--success);
+  text-shadow: var(--glow);
+}
+
+.status-error {
+  color: var(--danger);
+}
+
+.button {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+}
+
+.button:hover {
+  background: var(--primary);
+  color: #000;
+  box-shadow: var(--glow-strong);
+}
 
 
 }
