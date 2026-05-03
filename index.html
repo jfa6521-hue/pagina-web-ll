@@ -9,42 +9,27 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 <style>
-:root{
- body {
+```css
+:root {
+  --bg: #020403;
+  --panel: #0b1812;
+  --text: #d8ffe9;
+  --border: #123524;
+  --shadow: 0 8px 20px rgba(0,0,0,0.8);
+  --success: #22c55e;
+  --danger: #ef4444;
+  --glow: 0 0 10px rgba(0,255,156,0.3);
+  --font-main: 'JetBrains Mono', monospace;
+}
+
+/* 👇 ESTO VA FUERA */
+body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-main);
 }
+```
 
-.card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow);
-}
-
-.status-ok {
-  color: var(--success);
-  text-shadow: var(--glow);
-}
-
-.status-error {
-  color: var(--danger);
-}
-
-.button {
-  background: transparent;
-  border: 1px solid var(--primary);
-  color: var(--primary);
-}
-
-.button:hover {
-  background: var(--primary);
-  color: #000;
-  box-shadow: var(--glow-strong);
-}
-
-
-}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:100vh}
 
