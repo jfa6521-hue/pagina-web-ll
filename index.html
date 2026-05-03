@@ -10,11 +10,52 @@
 <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 <style>
 :root{
-  --bg:      #050e08;
---surface: #091409;
---border:  #143014;
---accent:  #22d37a;
---green:   #86efac;
+  ```css
+:root {
+  /* 🎨 Base */
+  --bg: #050e08;
+  --surface: #091409;
+  --surface-2: #0d1f0d;
+  --border: #143014;
+
+  /* 🌿 Colores principales */
+  --primary: #22d37a;
+  --primary-hover: #1cc46f;
+  --primary-soft: #86efac;
+
+  /* ✨ Acentos */
+  --accent: #4ade80;
+  --accent-strong: #16a34a;
+
+  /* 🧠 Texto */
+  --text: #e6f9ec;
+  --text-muted: #9bbfa7;
+  --text-dim: #6b8f78;
+
+  /* ⚠️ Estados */
+  --success: #22c55e;
+  --warning: #facc15;
+  --error: #ef4444;
+
+  /* 🌫️ Sombras y efectos */
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.6);
+
+  /* 🔲 Bordes */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  /* ⚡ Transiciones */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+
+  /* 🔤 Tipografía */
+  --font-main: 'Inter', sans-serif;
+}
+```
+
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:100vh}
