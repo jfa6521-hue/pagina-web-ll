@@ -12,49 +12,58 @@
 :root{
   ```css
 :root {
-  /* 🎨 Base */
-  --bg: #050e08;
-  --surface: #091409;
-  --surface-2: #0d1f0d;
-  --border: #143014;
+  /* 🧱 Fondo (oscuro real, no gris claro) */
+  --bg: #020403;
+  --surface: #050a07;
+  --surface-2: #08110c;
+  --panel: #0b1812;
 
-  /* 🌿 Colores principales */
-  --primary: #22d37a;
-  --primary-hover: #1cc46f;
-  --primary-soft: #86efac;
+  /* 🌿 Verde técnico (tipo terminal / monitoreo) */
+  --primary: #00ff9c;
+  --primary-dim: #00c97a;
+  --primary-glow: #00ff9c33;
 
-  /* ✨ Acentos */
-  --accent: #4ade80;
-  --accent-strong: #16a34a;
+  /* 🔋 Estados del sistema */
+  --success: #22c55e;   /* OK */
+  --warning: #facc15;   /* batería media */
+  --danger:  #ef4444;   /* batería baja / error */
+
+  /* 🌡️ Temperatura */
+  --temp-cold: #38bdf8;
+  --temp-normal: #22c55e;
+  --temp-hot: #ef4444;
+
+  /* 📡 NFC / accesos */
+  --access-granted: #00ff9c;
+  --access-denied: #ff3b3b;
 
   /* 🧠 Texto */
-  --text: #e6f9ec;
-  --text-muted: #9bbfa7;
-  --text-dim: #6b8f78;
-
-  /* ⚠️ Estados */
-  --success: #22c55e;
-  --warning: #facc15;
-  --error: #ef4444;
-
-  /* 🌫️ Sombras y efectos */
-  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.6);
+  --text: #d8ffe9;
+  --text-muted: #7aa892;
+  --text-dim: #4b6b5a;
 
   /* 🔲 Bordes */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  --border: #123524;
+  --border-strong: #1f5c3c;
+
+  /* ✨ Efectos (clave para que se vea PRO) */
+  --glow: 0 0 10px var(--primary-glow);
+  --glow-strong: 0 0 20px var(--primary-glow);
+
+  /* 🌫️ Sombras */
+  --shadow: 0 8px 20px rgba(0,0,0,0.8);
+
+  /* 🔲 Bordes redondeados */
+  --radius: 10px;
 
   /* ⚡ Transiciones */
-  --transition-fast: 0.2s ease;
-  --transition-normal: 0.3s ease;
+  --transition: 0.25s ease;
 
-  /* 🔤 Tipografía */
-  --font-main: 'Inter', sans-serif;
+  /* 🔤 Tipografía tipo sistema */
+  --font-main: 'JetBrains Mono', monospace;
 }
 ```
+
 
 }
 *{box-sizing:border-box;margin:0;padding:0}
