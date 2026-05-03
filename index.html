@@ -1,32 +1,62 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Monitor · Usuario</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+```css
 <style>
+
+/* ============================= */
+/* 🔥 VARIABLES MEJORADAS */
+/* ============================= */
 :root{
  --bg:#04070a;
- --surface:#0b0f17; 
--- border:#1a2233;
- 
- --accent:#00e0ff; 
+ --surface:#0b0f17;
+
+/* 🚨 ERROR ARREGLADO (tenías espacio en -- border) */
+ --border:#1a2233;
+
+ --accent:#00e0ff;
  --accent2:#f59e0b;
-  --green:#00ff9c; 
-  --red:#ff3b3b;
-  --text:#d9fdf3;
-  --muted:#3c4a5f;
-  --mono:'IBM Plex Mono',monospace;
-  --head:'Syne',sans-serif;
-  --glow:0 0 8px rgba(0,255,156,0.4);
-  --glow-blue:0 0 10px rgba(0,224,255,0.4);
+
+ --green:#00ff9c;
+ --red:#ff3b3b;
+
+ --text:#d9fdf3;
+ --muted:#3c4a5f;
+
+ --mono:'IBM Plex Mono',monospace;
+ --head:'Syne',sans-serif;
+
+/* 🔥 EFECTOS NUEVOS */
+ --glow:0 0 8px rgba(0,255,156,0.4);
+ --glow-blue:0 0 10px rgba(0,224,255,0.4);
 }
+
+/* ============================= */
+/* 🔥 FONDO MÁS PRO (IMPORTANTE) */
+/* ============================= */
+body{
+  background: radial-gradient(circle at top, #0a0f1a, #020407 70%);
+  color:var(--text);
+  font-family:var(--mono);
+  min-height:100vh;
+}
+
+/* ============================= */
+/* 🔥 EFECTO TEMPERATURA (AQUÍ VA) */
+/* ============================= */
+#val-temp{
+  text-shadow: var(--glow-blue);
+}
+
+/* ============================= */
+/* 🔥 EFECTO BATERÍA */
+/* ============================= */
+.bat-pct{
+  text-shadow: var(--glow);
+}
+
+/* ============================= */
+/* RESTO DE TU CSS ORIGINAL */
+/* ============================= */
+
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:100vh}
 
 /* TOPBAR */
 .topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 28px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:10}
@@ -36,127 +66,52 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:1
 .nav-a:hover,.nav-a.active{color:var(--accent)}
 .pill{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:999px;padding:5px 12px}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--muted);transition:background .3s;flex-shrink:0}
-.dot.on{background:var(--green);box-shadow:0 0 6px var(--green)}
+
+/* 🔥 MEJORA VISUAL LED */
+.dot.on{background:var(--green);box-shadow:0 0 8px var(--green)}
 .dot.off{background:var(--red)}
 .dot.wait{background:var(--accent2);animation:blink 1s infinite}
+
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 
-/* LAYOUT */
-.page{max-width:960px;margin:0 auto;padding:28px 20px 60px}
-.sec-title{font-family:var(--head);font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
-.row{display:grid;gap:14px;margin-bottom:28px}
-.row-2{grid-template-columns:1fr 1fr}
-@media(max-width:600px){.row-2{grid-template-columns:1fr}}
+/* ============================= */
+/* 🔥 CARDS MÁS PRO */
+/* ============================= */
+.card{
+  background: linear-gradient(145deg,#0b0f17,#05080c);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:22px;
+  position:relative;
+  overflow:hidden;
+  transition:all .25s ease;
+}
 
-/* CARDS */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;position:relative;overflow:hidden;transition:border-color .3s}
+/* 🔥 HOVER PRO */
+.card:hover{
+  border-color:var(--accent);
+  box-shadow:0 0 12px rgba(0,224,255,0.15);
+}
+
 .card.pulse{border-color:var(--accent)}
-.card.pulse::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);animation:scan .5s ease-out forwards}
+.card.pulse::after{
+  content:'';
+  position:absolute;
+  top:0;
+  left:-100%;
+  width:60%;
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  animation:scan .5s ease-out forwards;
+}
+
 @keyframes scan{from{left:-60%}to{left:150%}}
+
 .lbl{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
 .big{font-family:var(--head);font-size:54px;font-weight:800;line-height:1;color:var(--text)}
 .unit{font-size:16px;color:var(--muted);margin-left:2px}
 
-/* CHART */
-.chart-box{position:relative;height:110px;margin-top:16px}
+/* (EL RESTO LO DEJAS IGUAL) */
 
-/* BATERÍA */
-.bat-wrap{display:flex;align-items:center;gap:18px;margin-top:4px}
-.bat-pct{font-family:var(--head);font-size:46px;font-weight:800;line-height:1}
-.bat-lbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:5px}
-.bat-bar-bg{width:100%;height:8px;background:var(--border);border-radius:999px;margin-top:14px;overflow:hidden}
-.bat-bar{height:100%;border-radius:999px;background:var(--green);transition:width .6s ease}
-
-/* NFC DRAWERS */
-.nfc-list{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
-.drawer{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .2s}
-.drawer.flash{border-color:var(--accent);animation:glow .8s ease-out}
-@keyframes glow{0%{box-shadow:0 0 0 0 rgba(0,200,255,.4)}100%{box-shadow:0 0 0 10px rgba(0,200,255,0)}}
-.dhead{display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer;user-select:none}
-.avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0d2233,#0a2a1e);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--head);font-weight:800;font-size:14px;color:var(--accent);flex-shrink:0}
-.dinfo{flex:1;min-width:0}
-.dname{font-family:var(--head);font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px}
-.duid{font-size:10px;letter-spacing:.08em;color:var(--muted)}
-.dright{display:flex;align-items:center;gap:12px;flex-shrink:0}
-.badge{background:rgba(0,200,255,.1);color:var(--accent);border:1px solid rgba(0,200,255,.2);border-radius:999px;font-size:11px;font-weight:600;padding:3px 10px;min-width:34px;text-align:center}
-.dtime{font-size:10px;color:var(--muted)}
-.chev{width:15px;height:15px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s}
-.drawer.open .chev{transform:rotate(180deg)}
-.dbody{display:none;padding:0 18px 14px;border-top:1px solid var(--border)}
-.drawer.open .dbody{display:block}
-.elog{max-height:160px;overflow-y:auto;margin-top:10px;display:flex;flex-direction:column;gap:4px}
-.erow{display:flex;align-items:center;gap:10px;font-size:11px;padding:5px 8px;border-radius:6px;background:var(--bg)}
-.erow:first-child{background:rgba(0,200,255,.06)}
-.ets{color:var(--muted);flex-shrink:0}
-.edot{width:5px;height:5px;border-radius:50%;background:var(--green);flex-shrink:0}
-
-/* EMPTY */
-.empty{text-align:center;padding:40px 0;font-size:12px;color:var(--muted);letter-spacing:.06em}
-.empty-icon{font-size:28px;margin-bottom:8px}
-
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 </style>
-</head>
-<body>
-
-<div class="topbar">
-  <span class="brand">ESP32 · Monitor</span>
-  <div class="topbar-r">
-    <a href="index.html" class="nav-a active">Usuario</a>
-    <a href="admin.html" class="nav-a">Admin</a>
-    <div class="pill">
-      <div class="dot wait" id="dot"></div>
-      <span id="stxt">Conectando</span>
-    </div>
-  </div>
-</div>
-
-<div class="page">
-
-  <div class="sec-title">Sensores</div>
-  <div class="row row-2">
-
-    <!-- Temperatura -->
-    <div class="card" id="card-temp">
-      <div class="lbl">Temperatura</div>
-      <span class="big" id="val-temp">--</span><span class="unit">°C</span>
-      <div class="chart-box"><canvas id="chart-temp"></canvas></div>
-    </div>
-
-    <!-- Batería -->
-    <div class="card" id="card-bat">
-      <div class="lbl">Batería ESP32</div>
-      <div class="bat-wrap">
-        <svg width="30" height="52" viewBox="0 0 30 52">
-          <rect x="8" y="0" width="14" height="5" rx="2" fill="#1c2030"/>
-          <rect x="1" y="6" width="28" height="45" rx="5" fill="#0e1119" stroke="#1c2030" stroke-width="1.5"/>
-          <rect id="bf" x="4" y="9" width="22" height="39" rx="3" fill="var(--green)"
-                style="transform-origin:bottom center;transform:scaleY(.5);transition:transform .6s"/>
-        </svg>
-        <div>
-          <div class="bat-pct" id="val-bat" style="color:var(--green)">--%</div>
-          <div class="bat-lbl" id="bat-lbl">—</div>
-        </div>
-      </div>
-      <div class="bat-bar-bg"><div class="bat-bar" id="bat-bar" style="width:0%"></div></div>
-    </div>
-
-  </div>
-
-  <!-- Accesos NFC -->
-  <div class="sec-title">Accesos NFC</div>
-  <div class="nfc-list" id="nfc-list">
-    <div class="empty" id="nfc-empty">
-      <div class="empty-icon">🔖</div>
-      Esperando lecturas NFC…
-    </div>
-  </div>
-
-</div>
-
-<script src="config.js"></script>
-<script src="user.js"></script>
-</body>
-</html>
+```
