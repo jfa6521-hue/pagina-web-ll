@@ -3,12 +3,20 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<<<<<<< HEAD
 <title>app Monitoreo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
 <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script> -->
 <!-- <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script> -->
 <!-- ESTILOS DE LA PAGINA css inline, tiene responsive -->
+=======
+<title>Monitor · Usuario</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+>>>>>>> 91b8a12e356c52cd7297be4cdfdc16f89dc7563e
 <style>
 :root{
   --bg:#080a0f;--surface:#0e1119;--border:#1c2030;
@@ -19,12 +27,16 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:100vh}
+<<<<<<< HEAD
 .nfc-card {
   padding:10px;
   border:1px solid #1c2030;
   border-radius:8px;
   margin-bottom:8px;
 }
+=======
+
+>>>>>>> 91b8a12e356c52cd7297be4cdfdc16f89dc7563e
 /* TOPBAR */
 .topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 28px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:10}
 .brand{font-family:var(--head);font-weight:800;font-size:16px;color:var(--accent);letter-spacing:.04em}
@@ -96,15 +108,27 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:1
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 </style>
 </head>
+<<<<<<< HEAD
 
 <!-- cuerpo del documento -->
+=======
+>>>>>>> 91b8a12e356c52cd7297be4cdfdc16f89dc7563e
 <body>
 
 <div class="topbar">
   <span class="brand">ESP32 · Monitor</span>
   <div class="topbar-r">
+<<<<<<< HEAD
     <a href="index.html" class="nav-a active">Sensores</a>
     <a href="admin.html" class="nav-a">Monitoreo Red</a>
+=======
+    <a href="index.html" class="nav-a active">Usuario</a>
+    <a href="admin.html" class="nav-a">Admin</a>
+    <div class="pill">
+      <div class="dot wait" id="dot"></div>
+      <span id="stxt">Conectando</span>
+    </div>
+>>>>>>> 91b8a12e356c52cd7297be4cdfdc16f89dc7563e
   </div>
 </div>
 
@@ -140,6 +164,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:1
 
   </div>
 
+<<<<<<< HEAD
 <!-- Accesos NFC -->
 <div class="sec-title">Accesos NFC</div>
 
@@ -155,18 +180,31 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:1
       Accesos: <span id="nfc2-val">0</span>
     </div>
 
+=======
+  <!-- Accesos NFC -->
+  <div class="sec-title">Accesos NFC</div>
+  <div class="nfc-list" id="nfc-list">
+>>>>>>> 91b8a12e356c52cd7297be4cdfdc16f89dc7563e
     <div class="empty" id="nfc-empty">
       <div class="empty-icon">🔖</div>
       Esperando lecturas NFC…
     </div>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 91b8a12e356c52cd7297be4cdfdc16f89dc7563e
   </div>
 
 </div>
 
+<<<<<<< HEAD
 <!-- importando lo scripts, parsear los datos y obtener los topics -->
 <script src="config.js"></script> 
 <script src="chart.js"></script>
 <script src="sensors.js"></script> 
+=======
+<script src="config.js"></script>
+<script src="user.js"></script>
+>>>>>>> 91b8a12e356c52cd7297be4cdfdc16f89dc7563e
 </body>
 </html>

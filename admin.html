@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Monitor · Admin</title>
+<<<<<<< HEAD
 
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
@@ -391,11 +392,144 @@ body{
 
   </div>
 
+=======
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+<style>
+:root{
+--bg:#080a0f;--surface:#0e1119;--border:#1c2030;
+  --accent:#00c8ff;--accent2:#f59e0b;
+  --green:#22d37a;--red:#f43f5e;
+  --text:#e2e8f0;--muted:#3a4155;
+  --mono:'IBM Plex Mono',monospace;--head:'Syne',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:100vh}
+
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 28px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:10}
+.brand{font-family:var(--head);font-weight:800;font-size:16px;color:var(--accent);letter-spacing:.04em}
+.topbar-r{display:flex;align-items:center;gap:18px}
+.nav-a{font-size:11px;color:var(--muted);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;transition:color .2s}
+.nav-a:hover,.nav-a.active{color:var(--accent)}
+.pill{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:999px;padding:5px 12px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:background .3s}
+.dot.on{background:var(--green);box-shadow:0 0 6px var(--green)}
+.dot.off{background:var(--red)}
+.dot.wait{background:var(--accent);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+.page{max-width:960px;margin:0 auto;padding:28px 20px 60px}
+.admin-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,.08);color:var(--accent);border:1px solid rgba(245,158,11,.2);border-radius:6px;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;margin-bottom:24px}
+.sec-title{font-family:var(--head);font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+
+/* STAT CARDS */
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
+@media(max-width:600px){.stat-row{grid-template-columns:1fr}}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px}
+.stat-card .lbl{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.stat-card .num{font-family:var(--head);font-size:48px;font-weight:800;line-height:1}
+
+/* WIFI LIST */
+.wifi-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:28px}
+.wifi-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.wifi-header-title{font-family:var(--head);font-size:13px;font-weight:700}
+.wifi-count-badge{background:rgba(0,200,255,.1);color:var(--blue);border:1px solid rgba(0,200,255,.2);border-radius:999px;font-size:11px;font-weight:600;padding:3px 10px}
+
+.wifi-item{display:flex;align-items:center;gap:14px;padding:13px 20px;border-bottom:1px solid var(--border);transition:background .15s}
+.wifi-item:last-child{border-bottom:none}
+.wifi-item:hover{background:#0d1020}
+.wifi-icon{width:32px;height:32px;border-radius:8px;background:rgba(0,200,255,.08);border:1px solid rgba(0,200,255,.15);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.wifi-name{font-family:var(--head);font-size:13px;font-weight:600;color:var(--text)}
+.wifi-mac{font-size:10px;color:var(--muted);margin-top:2px}
+.wifi-right{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.wifi-signal{font-size:10px;color:var(--muted)}
+.wifi-dot{width:7px;height:7px;border-radius:50%;background:var(--green);margin-top:2px}
+
+.wifi-empty{padding:40px;text-align:center;font-size:12px;color:var(--muted)}
+
+/* PERSON COUNTERS */
+.counter-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:28px}
+.counter-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;display:flex;align-items:center;gap:14px;transition:border-color .2s}
+.counter-card.new-entry{border-color:var(--accent);animation:glow .7s ease-out}
+@keyframes glow{0%{box-shadow:0 0 0 0 rgba(245,158,11,.3)}100%{box-shadow:0 0 0 10px rgba(245,158,11,0)}}
+.c-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1a1000,#0a1a00);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--head);font-weight:800;font-size:15px;color:var(--accent);flex-shrink:0}
+.c-info{flex:1;min-width:0}
+.c-name{font-family:var(--head);font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.c-uid{font-size:9px;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
+.c-count{font-family:var(--head);font-size:28px;font-weight:800;color:var(--accent);line-height:1}
+.c-count-lbl{font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="brand">ESP32 · Admin</span>
+  <div class="topbar-r">
+    <a href="index.html" class="nav-a">Usuario</a>
+    <a href="admin.html" class="nav-a active">Admin</a>
+    <div class="pill">
+      <div class="dot wait" id="dot"></div>
+      <span id="stxt">Conectando</span>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="admin-badge">🔐 Vista de Administrador</div>
+
+  <!-- STATS RÁPIDAS -->
+  <div class="sec-title">Resumen</div>
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="lbl">Clientes WiFi</div>
+      <div class="num" id="stat-wifi" style="color:var(--blue)">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="lbl">Accesos hoy</div>
+      <div class="num" id="stat-accesos" style="color:var(--accent)">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="lbl">Personas únicas</div>
+      <div class="num" id="stat-personas" style="color:var(--green)">0</div>
+    </div>
+  </div>
+
+  <!-- CLIENTES WIFI -->
+  <div class="sec-title">Dispositivos conectados al Access Point</div>
+  <div class="wifi-card">
+    <div class="wifi-header">
+      <span class="wifi-header-title">Red ESP32-AP</span>
+      <span class="wifi-count-badge" id="wifi-badge">0 conectados</span>
+    </div>
+    <div id="wifi-list">
+      <div class="wifi-empty" id="wifi-empty">Sin dispositivos conectados</div>
+    </div>
+  </div>
+
+  <!-- CONTADORES POR PERSONA -->
+  <div class="sec-title">Conteo de ingresos por persona</div>
+  <div class="counter-grid" id="counter-grid">
+    <div style="grid-column:1/-1;text-align:center;padding:30px;font-size:12px;color:var(--muted)" id="counter-empty">
+      Sin registros NFC aún
+    </div>
+  </div>
+>>>>>>> 91b8a12e356c52cd7297be4cdfdc16f89dc7563e
 
 </div>
 
 <script src="config.js"></script>
+<<<<<<< HEAD
 <script src="adminred.js"></script>
 
 </body>
 </html>
+=======
+<script src="admin.js"></script>
+</body>
+</html>
+>>>>>>> 91b8a12e356c52cd7297be4cdfdc16f89dc7563e
