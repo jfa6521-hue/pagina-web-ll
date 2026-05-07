@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Monitor · Admin</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+
+<style>
+:root{
+  --bg:#080a0f;
+  --surface:#0e1119;
+  --border:#1c2030;
+
+  --accent:#00c8ff;
+  --accent2:#f59e0b;
+
+  --green:#22d37a;
+  --red:#f43f5e;
+
+  --text:#e2e8f0;
+  --muted:#3a4155;
+
+  --mono:'IBM Plex Mono',monospace;
+  --head:'Syne',sans-serif;
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--mono);
+  min-height:100vh;
+}
+
+/* TOPBAR */
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:16px 28px;
+
+  border-bottom:1px solid var(--border);
+
+  background:var(--surface);
+
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+.brand{
+  font-family:var(--head);
+  font-weight:800;
+  font-size:16px;
+  color:var(--accent);
+  letter-spacing:.04em;
+}
+
+.topbar-r{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+.internet-ok {
+  border-color: #22d37a;
+}
+
+.internet-off {
+  border-color: #f43f5e;
+}
+
+.nav-a{
+  font-size:11px;
+  color:var(--muted);
+  text-decoration:none;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  transition:color .2s;
+}
+
+.nav-a:hover,
+.nav-a.active{
+  color:var(--accent);
+}
+
+/* PAGE */
+
+.page{
+  max-width:960px;
+  margin:0 auto;
+  padding:28px 20px 60px;
+}
+
+.sec-title{
+  font-family:var(--head);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  color:var(--muted);
+
+  margin-bottom:14px;
+  padding-bottom:8px;
+
+  border-bottom:1px solid var(--border);
+}
+
+/* STATUS ROW */
+
+.status-row{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+  margin-bottom:28px;
+}
+
+@media(max-width:700px){
+  .status-row{
+    grid-template-columns:1fr;
+  }
+}
+
+.status-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:22px;
+}
+
+.status-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:18px;
+}
+
+.status-label{
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+.status-icon{
+  width:42px;
+  height:42px;
+
+  border-radius:12px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:rgba(0,200,255,.08);
+  border:1px solid rgba(0,200,255,.15);
+
+  font-size:18px;
+}
+
+.status-value{
+  font-family:var(--head);
+  font-size:34px;
+  font-weight:800;
+  line-height:1;
+  margin-bottom:10px;
+}
+
+.status-sub{
+  font-size:11px;
+  color:var(--muted);
+  line-height:1.5;
+}
+
+/* INTERNET STATES */
+
+.internet-ok .status-value{
+  color:var(--green);
+}
+
+.internet-off .status-value{
+  color:var(--red);
+}
+
+/* WIFI CARD */
+
+.wifi-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+  margin-bottom:28px;
+}
+
+.wifi-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:16px 20px;
+
+  border-bottom:1px solid var(--border);
+}
+
+.wifi-header-title{
+  font-family:var(--head);
+  font-size:13px;
+  font-weight:700;
+}
+
+.wifi-count-badge{
+  background:rgba(0,200,255,.1);
+  color:var(--accent);
+
+  border:1px solid rgba(0,200,255,.2);
+
+  border-radius:999px;
+
+  font-size:11px;
+  font-weight:600;
+
+  padding:3px 10px;
+}
+
+.wifi-item{
+  display:flex;
+  align-items:center;
+  gap:14px;
+
+  padding:14px 20px;
+
+  border-bottom:1px solid var(--border);
+
+  transition:background .15s;
+}
+
+.wifi-item:last-child{
+  border-bottom:none;
+}
+
+.wifi-item:hover{
+  background:#0d1020;
+}
+
+.wifi-icon{
+  width:36px;
+  height:36px;
+
+  border-radius:10px;
+
+  background:rgba(0,200,255,.08);
+  border:1px solid rgba(0,200,255,.15);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:15px;
+  flex-shrink:0;
+}
+
+.wifi-name{
+  font-family:var(--head);
+  font-size:13px;
+  font-weight:700;
+  color:var(--text);
+}
+
+.wifi-mac{
+  font-size:10px;
+  color:var(--muted);
+  margin-top:3px;
+}
+
+.wifi-right{
+  margin-left:auto;
+
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:4px;
+}
+
+.wifi-signal{
+  font-size:10px;
+  color:var(--muted);
+}
+
+.wifi-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--green);
+
+  box-shadow:0 0 8px rgba(34,211,122,.6);
+}
+
+.wifi-empty{
+  padding:40px;
+  text-align:center;
+  font-size:12px;
+  color:var(--muted);
+}
+
+/* SCROLL */
+
+::-webkit-scrollbar{
+  width:4px;
+}
+
+::-webkit-scrollbar-track{
+  background:transparent;
+}
+
+::-webkit-scrollbar-thumb{
+  background:var(--border);
+  border-radius:4px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOPBAR -->
+
+<div class="topbar">
+  <span class="brand">ESP32 · Admin</span>
+
+  <div class="topbar-r">
+    <a href="index.html" class="nav-a">Sensores</a>
+    <a href="admin.html" class="nav-a active">Monitoreo Red</a>
+  </div>
+</div>
+
+<!-- CONTENT -->
+
+<div class="page">
+
+  <!-- STATUS GENERAL -->
+
+  <div class="sec-title">Estado del sistema</div>
+
+  <div class="status-row">
+
+    <!-- INTERNET -->
+
+    <div class="status-card internet-ok" id="internet-card">
+
+      <div class="status-top">
+        <span class="status-label">Acceso a Internet</span>
+        <div class="status-icon">🌐</div>
+      </div>
+
+      <div class="status-value" id="internet-status">
+        Conectado
+      </div>
+
+      <div class="status-sub" id="internet-desc">
+        NAT Router activo · tráfico habilitado
+      </div>
+
+    </div>
+
+    <!-- CLIENTES -->
+
+    <div class="status-card">
+
+      <div class="status-top">
+        <span class="status-label">Clientes conectados</span>
+        <div class="status-icon">📶</div>
+      </div>
+
+      <div class="status-value" id="client-count">
+        0
+      </div>
+
+      <div class="status-sub">
+        Dispositivos asociados actualmente al Access Point
+      </div>
+
+    </div>
+
+  </div>
+
+
+</div>
+
+<script src="config.js"></script>
+<script src="adminred.js"></script>
+
+</body>
+</html>
