@@ -1,71 +1,107 @@
-async function loadAdminData() {
+// ==============================
+// MQTT
+// ==============================
 
-  try {
+const client = mqtt.connect(CONFIG_MQTT.BROKER_WS, {
 
-    const res = await fetch("/api/admin");
+    username: CONFIG_MQTT.USER,
+    password: CONFIG_MQTT.PASS,
 
-    if (!res.ok) {
-      throw new Error("HTTP " + res.status);
+    clientId: "admin_" + Math.random().toString(16).substr(2, 8)
+
+});
+
+// ==============================
+// CONEXIÓN
+// ==============================
+
+client.on("connect", () => {
+
+    console.log("Admin MQTT conectado");
+
+    // solo necesitamos este topic
+    client.subscribe("esp32/usersAP");
+
+});
+
+// ==============================
+// MENSAJES
+// ==============================
+
+client.on("message", (topic, message) => {
+
+    const raw = message.toString();
+
+    console.log(topic, raw);
+
+    let data;
+
+    try {
+
+        data = JSON.parse(raw);
+
+    } catch (err) {
+
+        console.error("JSON inválido:", err);
+        return;
     }
 
-    const data = await res.json();
+    // ==========================
+    // USERS AP
+    // ==========================
+    if (topic === "esp32/usersAP") {
 
-    // =========================
-    // CLIENTES
-    // =========================
-    document.getElementById("client-count").textContent =
-      data.clients;
+        const users = data.usuarios;
 
-    // =========================
-    // INTERNET
-    // =========================
-    const internetCard =
-      document.getElementById("internet-card");
+        // CLIENTES
+        document.getElementById("client-count").textContent =
+            users;
 
-    const internetStatus =
-      document.getElementById("internet-status");
+        // INTERNET
+        const internetCard =
+            document.getElementById("internet-card");
 
-    const internetDesc =
-      document.getElementById("internet-desc");
+        const internetStatus =
+            document.getElementById("internet-status");
 
-    // Si hay al menos 1 cliente
-    if (data.clients >= 1) {
+        const internetDesc =
+            document.getElementById("internet-desc");
 
-      internetCard.classList.remove("internet-off");
-      internetCard.classList.add("internet-ok");
+        // lógica internet
+        if (users >= 1) {
 
-      internetStatus.textContent = "Conectado";
+            internetCard.classList.remove("internet-off");
+            internetCard.classList.add("internet-ok");
 
-      internetDesc.textContent =
-        "NAT Router activo · tráfico habilitado";
+            internetStatus.textContent = "Conectado";
+
+            internetDesc.textContent =
+                "NAT Router activo · tráfico habilitado";
+
+        }
+
+        else {
+
+            internetCard.classList.remove("internet-ok");
+            internetCard.classList.add("internet-off");
+
+            internetStatus.textContent = "Desconectado";
+
+            internetDesc.textContent =
+                "Sin dispositivos conectados";
+        }
     }
 
-    else {
+});
 
-      internetCard.classList.remove("internet-ok");
-      internetCard.classList.add("internet-off");
+// ==============================
+// DESCONECTAR AL SALIR
+// ==============================
 
-      internetStatus.textContent = "Desconectado";
+window.addEventListener("beforeunload", () => {
 
-      internetDesc.textContent =
-        "Sin dispositivos conectados";
-    }
+    console.log("Desconectando MQTT admin...");
 
-  }
+    client.end();
 
-  catch (err) {
-    console.error("Error admin API:", err);
-  }
-}
-
-// =========================
-// INICIO
-// =========================
-function startAdmin() {
-
-  loadAdminData();
-
-  setInterval(loadAdminData, 3000);
-}
-
-window.addEventListener("load", startAdmin);
+});

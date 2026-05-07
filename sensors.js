@@ -1,145 +1,142 @@
 // ==============================
-// ESTADO GLOBAL
+// MQTT
 // ==============================
-let lastNFC1 = -1;
-let lastNFC2 = -1;
-let tempChart = null;
-let tempData = [];
-let tempLabels = [];
 
+const client = mqtt.connect(CONFIG_MQTT.BROKER_WS, {
 
-//FUNCION PARA CREAR LA GRAFICA
-function initTempChart() {
-  const ctx = document.getElementById("chart-temp");
+    username: CONFIG_MQTT.USER,
+    password: CONFIG_MQTT.PASS,
 
-  if (!ctx) {
-    console.error("Canvas chart-temp no encontrado");
-    return;
-  }
+    clientId: "web_" + Math.random().toString(16).substr(2, 8)
 
-  tempChart = new Chart(ctx, {
+});
+
+// ==============================
+// CHART TEMPERATURA
+// ==============================
+
+const tempData = [];
+const tempLabels = [];
+
+const ctx = document.getElementById("chart-temp");
+
+const tempChart = new Chart(ctx, {
+
     type: "line",
+
     data: {
-      labels: tempLabels,
-      datasets: [{
-        label: "Temperatura",
-        data: tempData,
-        tension: 0.3,
-        borderWidth: 2,
-        pointRadius: 0
-      }]
+        labels: tempLabels,
+        datasets: [{
+            label: "Temperatura",
+            data: tempData,
+            tension: 0.3
+        }]
     },
+
     options: {
-      responsive: true,
-      animation: false,
-      plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        x: { display: false },
-        y: { display: true }
-      }
+        responsive: true,
+        animation: false,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
     }
-  });
-}
-
-//UPDATE DE LA GRAFICA
-function updateTempChart(value) {
-  if (!tempChart) return;
-
-  const now = new Date().toLocaleTimeString();
-
-  tempData.push(value);
-  tempLabels.push(now);
-
-  // limitar a últimos 20 puntos
-  if (tempData.length > 20) {
-    tempData.shift();
-    tempLabels.shift();
-  }
-
-  tempChart.update();
-}
+});
 
 // ==============================
-// ACTUALIZAR UI
+// MQTT CONNECT
 // ==============================
-function updateUI(data) {
 
-  
-  // ===== TEMPERATURA =====
-  document.getElementById("val-temp").textContent = data.temp;
+client.on("connect", () => {
 
-// actualizar gráfica
-updateTempChart(data.temp);
+    console.log("MQTT conectado");
 
-  // ===== BATERÍA =====
-  const bat = data.bat;
-
-  document.getElementById("val-bat").textContent = bat + "%";
-  document.getElementById("bat-bar").style.width = bat + "%";
-
-  const color = bat > 60 ? "#22d37a" : bat > 30 ? "#f59e0b" : "#f43f5e";
-  document.getElementById("val-bat").style.color = color;
-
-  // ===== NFC (solo si cambia) =====
-  const container = document.getElementById("nfc-list");
-  const empty = document.getElementById("nfc-empty");
-
-  if (data.nfc1 !== lastNFC1 || data.nfc2 !== lastNFC2) {
-
-    lastNFC1 = data.nfc1;
-    lastNFC2 = data.nfc2;
-
-    empty.style.display = "none";
-
-    container.innerHTML = `
-      <div style="padding:10px;border:1px solid #1c2030;border-radius:8px;margin-bottom:8px;">
-        <strong>Persona 1 (ID: RFID_001)</strong><br>
-        Accesos: ${data.nfc1}
-      </div>
-
-      <div style="padding:10px;border:1px solid #1c2030;border-radius:8px;">
-        <strong>Persona 2 (ID: RFID_002)</strong><br>
-        Accesos: ${data.nfc2}
-      </div>
-    `;
-  }
-}
+    client.subscribe("esp32/temperatura");
+    client.subscribe("esp32/bateria");
+    client.subscribe("esp32/nfc");
+    //client.subscribe("esp32/usersAP");
+});
 
 // ==============================
-// CARGA DE DATOS (SIN abort)
+// MQTT MESSAGE
 // ==============================
-async function loadAll() {
-  try {
-    const res = await fetch("/api/sensors");
 
-    if (!res.ok) {
-      throw new Error("HTTP " + res.status);
+client.on("message", (topic, message) => {
+
+    const raw = message.toString();
+
+    console.log(topic, raw);
+
+    let data;
+
+    try {
+        data = JSON.parse(raw);
+    } catch (err) {
+        console.error("JSON inválido:", err);
+        return;
     }
 
-    const data = await res.json();
+    // ==========================
+    // TEMPERATURA
+    // ==========================
+    if (topic === "esp32/temperatura") {
 
-    console.log("DATA:", data); // debug opcional
+        const temp = data.temp;
 
-    updateUI(data);
+        document.getElementById("val-temp").textContent = temp;
 
-  } catch (err) {
-    console.error("Error API:", err);
-  }
-}
+        // chart
+        tempData.push(Number(temp));
+        tempLabels.push("");
+
+        if (tempData.length > 20) {
+            tempData.shift();
+            tempLabels.shift();
+        }
+
+        tempChart.update();
+    }
+
+    // ==========================
+    // BATERÍA
+    // ==========================
+    else if (topic === "esp32/bateria") {
+
+        const bat = data.bat;
+
+        document.getElementById("val-bat").textContent = bat + "%";
+
+        document.getElementById("bat-bar").style.width = bat + "%";
+
+        const color =
+            bat > 60 ? "#22d37a" :
+            bat > 30 ? "#f59e0b" :
+            "#f43f5e";
+
+        document.getElementById("val-bat").style.color = color;
+    }
+
+    // ==========================
+    // NFC
+    // ==========================
+    else if (topic === "esp32/nfc") {
+
+        document.getElementById("nfc1-val").textContent = data.persona1;
+
+        document.getElementById("nfc2-val").textContent = data.persona2;
+    }
+
+});
 
 // ==============================
-// INICIO
+// DESCONECTAR AL SALIR
 // ==============================
-function startApp() {
-  initTempChart();
-  loadAll(); // primera carga
-  // más estable para ESP32
-  setInterval(loadAll, 3000);
-}
 
-// ==============================
-// EVENTOS
-// ==============================
-window.addEventListener("load", startApp);
+window.addEventListener("beforeunload", () => {
+
+    console.log("Desconectando MQTT...");
+
+    client.end();
+
+});
