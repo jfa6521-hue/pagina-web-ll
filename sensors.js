@@ -1,4 +1,43 @@
 // ==============================
+// TIMEOUT OFFLINE
+// ==============================
+
+let offlineTimer = null;
+
+// mostrar offline al inicio
+window.addEventListener("load", () => {
+
+    const overlay =
+        document.getElementById("offline-overlay");
+
+    overlay.style.display = "flex";
+
+    resetOfflineTimer();
+
+});
+
+
+function resetOfflineTimer() {
+
+    const overlay =
+        document.getElementById("offline-overlay");
+
+    // ocultar overlay
+    overlay.style.display = "none";
+
+    // reiniciar timer
+    clearTimeout(offlineTimer);
+
+    offlineTimer = setTimeout(() => {
+
+        overlay.style.display = "flex";
+
+    }, 10000); // 5 segundos sin datos, SE PUEDE CAMBIAR 
+}
+
+
+
+// ==============================
 // MQTT
 // ==============================
 
@@ -52,10 +91,13 @@ client.on("connect", () => {
 
     console.log("MQTT conectado");
 
+    // ocultar overlay al conectar
+    document.getElementById("offline-overlay")
+        .style.display = "none";
+
     client.subscribe("esp32/temperatura");
     client.subscribe("esp32/bateria");
     client.subscribe("esp32/nfc");
-    //client.subscribe("esp32/usersAP");
 });
 
 // ==============================
@@ -65,6 +107,8 @@ client.on("connect", () => {
 client.on("message", (topic, message) => {
 
     const raw = message.toString();
+    // llegó data → ESP32 online
+    resetOfflineTimer();
 
     console.log(topic, raw);
 
@@ -128,6 +172,36 @@ client.on("message", (topic, message) => {
     }
 
 });
+
+// ==============================
+// MQTT DESCONECTADO
+// ==============================
+
+client.on("offline", () => {
+
+    console.log("MQTT offline");
+
+    document.getElementById("offline-overlay")
+        .style.display = "flex";
+});
+
+client.on("close", () => {
+
+    console.log("MQTT cerrado");
+
+    document.getElementById("offline-overlay")
+        .style.display = "flex";
+});
+
+client.on("error", (err) => {
+
+    console.error("MQTT error:", err);
+
+    document.getElementById("offline-overlay")
+        .style.display = "flex";
+});
+
+
 
 // ==============================
 // DESCONECTAR AL SALIR
